@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Absensi Siswa</string>
+    <string name="login_title">Portal Absensi Siswa</string>
+    <string name="login_subtitle">Sistem Informasi Kehadiran &amp; Manajemen Kelas Terpadu</string>
+    <string name="username_label">Username</string>
+    <string name="password_label">Password (Tanpa Enkripsi)</string>
+    <string name="login_button">Masuk ke Aplikasi</string>
+    <string name="logout_button">Keluar</string>
+    <string name="menu_dashboard">Dashboard</string>
+    <string name="menu_users">User Akses</string>
+    <string name="menu_kelas">Data Kelas</string>
+    <string name="menu_siswa">Data Siswa</string>
+    <string name="menu_kelompok">Kelompok Siswa</string>
+    <string name="menu_absensi">Absensi Siswa</string>
+    <string name="menu_laporan">Laporan Data</string>
+    <string name="menu_apps_script">Kode Apps Script</string>
+    <string name="btn_tambah">Tambah Data</string>
+    <string name="btn_simpan">Simpan</string>
+    <string name="btn_update">Perbarui</string>
+    <string name="btn_hapus">Hapus</string>
+    <string name="btn_batal">Batal</string>
+    <string name="btn_reset_dummy">Reset 2 Data Dummy</string>
+    <string name="hero_banner_desc">Ilustrasi Dashboard Absensi Siswa</string>
+</resources>

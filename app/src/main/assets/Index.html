@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aplikasi Absensi Siswa Modern</title>
+  <style>
+    :root {
+      --primary: #0F4C81;
+      --primary-light: #1E6BB8;
+      --accent: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --bg: #F1F5F9;
+      --card: #FFFFFF;
+      --text: #0F172A;
+      --muted: #64748B;
+      --border: #E2E8F0;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; }
+    #loginScreen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #0F4C81 0%, #0B2D4D 55%, #064E3B 100%);
+      padding: 20px;
+    }
+    .login-card {
+      background: var(--card); width: 100%; max-width: 430px; border-radius: 20px;
+      padding: 28px 24px; box-shadow: 0 24px 48px rgba(0,0,0,0.28);
+    }
+    .login-badge {
+      display: inline-block; background: #E0F2FE; color: var(--primary);
+      font-weight: 700; font-size: 11px; padding: 5px 10px; border-radius: 99px; margin-bottom: 10px;
+    }
+    .login-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+    .login-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12.5px; font-weight: 600; margin-bottom: 5px; color: #334155; }
+    .form-control {
+      width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px;
+      font-size: 14px; outline: none;
+    }
+    .form-control:focus { border-color: var(--primary); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 10px 16px; border: none; border-radius: 10px; font-weight: 700; font-size: 13.5px;
+      cursor: pointer;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-warning { background: var(--warning); color: #fff; }
+    .btn-outline { background: #F8FAFC; color: var(--text); border: 1px solid var(--border); }
+    .btn-sm { padding: 6px 10px; font-size: 12px; border-radius: 8px; }
+    .btn-block { width: 100%; }
+    .dummy-box {
+      margin-top: 16px; padding: 12px; background: #F8FAFC; border: 1px dashed #CBD5E1;
+      border-radius: 10px; font-size: 12px; color: var(--muted);
+    }
+    #appScreen { display: none; min-height: 100vh; }
+    .top-nav {
+      background: #0F172A; color: #fff; padding: 12px 16px;
+      display: flex; overflow-x: auto; gap: 8px; align-items: center;
+    }
+    .nav-btn {
+      white-space: nowrap; background: #1E293B; border: none; color: #CBD5E1;
+      padding: 8px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 600; cursor: pointer;
+    }
+    .nav-btn.active { background: var(--primary); color: #fff; }
+    .main-content { padding: 16px; }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px;
+    }
+    .stat-card {
+      background: var(--card); padding: 14px; border-radius: var(--radius);
+      box-shadow: 0 2px 6px rgba(15,23,42,0.05); border-left: 4px solid var(--primary);
+    }
+    .stat-card h4 { font-size: 11px; color: var(--muted); text-transform: uppercase; }
+    .stat-card .val { font-size: 22px; font-weight: 800; margin-top: 4px; }
+    .panel {
+      background: var(--card); border-radius: var(--radius); padding: 16px;
+      box-shadow: 0 2px 6px rgba(15,23,42,0.05); margin-bottom: 16px;
+    }
+    .panel-title { font-size: 15px; font-weight: 800; margin-bottom: 12px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { background: #F8FAFC; font-weight: 700; }
+    .badge { padding: 3px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+    .badge-Hadir { background: #D1FAE5; color: #065F46; }
+    .badge-Izin { background: #DBEAFE; color: #1E40AF; }
+    .badge-Sakit { background: #FEF3C7; color: #92400E; }
+    .badge-Alfa { background: #FEE2E2; color: #991B1B; }
+    .bar-row { margin-bottom: 10px; }
+    .bar-label { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+    .bar-track { height: 10px; background: #E2E8F0; border-radius: 99px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 99px; }
+  </style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="login-card">
+    <span class="login-badge">WEB APP PREVIEW (INDEX.HTML)</span>
+    <h1 class="login-title">Portal Absensi Siswa</h1>
+    <p class="login-sub">Login menggunakan Username &amp; Password tanpa enkripsi</p>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="loginUser" class="form-control" value="admin" />
+    </div>
+    <div class="form-group">
+      <label>Password (Tanpa Enkripsi)</label>
+      <input type="text" id="loginPass" class="form-control" value="admin123" />
+    </div>
+    <button class="btn btn-primary btn-block" onclick="handleLogin()">Masuk ke Aplikasi</button>
+    <p id="loginErr" style="color:#EF4444; font-size:12px; margin-top:8px; display:none;"></p>
+    <div class="dummy-box">
+      <strong>2 Data Dummy User:</strong><br/>
+      1. <code>admin</code> / <code>admin123</code> (Admin)<br/>
+      2. <code>guru</code> / <code>guru123</code> (Guru)
+    </div>
+  </div>
+</div>
+
+<div id="appScreen">
+  <nav class="top-nav">
+    <button class="nav-btn active" onclick="switchTab('dashboard', this)">📊 Dashboard</button>
+    <button class="nav-btn" onclick="switchTab('users', this)">🔐 1a. User</button>
+    <button class="nav-btn" onclick="switchTab('kelas', this)">🏫 1b. Kelas</button>
+    <button class="nav-btn" onclick="switchTab('siswa', this)">🎓 2. Siswa</button>
+    <button class="nav-btn" onclick="switchTab('kelompok', this)">👥 3. Kelompok</button>
+    <button class="nav-btn" onclick="switchTab('absensi', this)">📝 4. Absensi</button>
+    <button class="nav-btn" onclick="switchTab('laporan', this)">📑 5. Laporan</button>
+    <button class="nav-btn" style="background:#991B1B;color:#fff;" onclick="handleLogout()">Keluar</button>
+  </nav>
+
+  <main class="main-content">
+    <section id="tab-dashboard" class="tab-pane">
+      <div class="stats-grid">
+        <div class="stat-card"><h4>Total Siswa</h4><div class="val" id="statSiswa">0</div></div>
+        <div class="stat-card"><h4>Total Kelas</h4><div class="val" id="statKelas">0</div></div>
+        <div class="stat-card"><h4>Kelompok</h4><div class="val" id="statKelompok">0</div></div>
+        <div class="stat-card"><h4>Absensi</h4><div class="val" id="statAbsensi">0</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Grafik Status Kehadiran</div>
+        <div id="chartStatusBars"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Grafik Siswa per Kelas</div>
+        <div id="chartKelasBars"></div>
+      </div>
+    </section>
+
+    <section id="tab-users" class="tab-pane" style="display:none;">
+      <div class="panel">
+        <div class="panel-title">1a. Form User Akses (CRUD)</div>
+        <input type="hidden" id="usr_id" />
+        <div class="form-grid">
+          <div class="form-group"><label>Username</label><input id="usr_username" class="form-control" /></div>
+          <div class="form-group"><label>Password</label><input id="usr_password" class="form-control" /></div>
+          <div class="form-group"><label>Nama Lengkap</label><input id="usr_nama" class="form-control" /></div>
+          <div class="form-group"><label>Role</label><select id="usr_role" class="form-control"><option>Admin</option><option>Guru</option></select></div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="saveUsers()">Simpan User</button>
+      </div>
+      <div class="panel"><div class="table-wrap"><table><thead><tr><th>Username</th><th>Password</th><th>Nama</th><th>Role</th><th>Aksi</th></tr></thead><tbody id="tbodyUsers"></tbody></table></div></div>
+    </section>
+
+    <section id="tab-kelas" class="tab-pane" style="display:none;">
+      <div class="panel">
+        <div class="panel-title">1b. Form Kelas (CRUD)</div>
+        <input type="hidden" id="kls_id" />
+        <div class="form-grid">
+          <div class="form-group"><label>Kode Kelas</label><input id="kls_kode" class="form-control" /></div>
+          <div class="form-group"><label>Nama Kelas</label><input id="kls_nama" class="form-control" /></div>
+          <div class="form-group"><label>Wali Kelas</label><input id="kls_wali" class="form-control" /></div>
+          <div class="form-group"><label>Tahun Ajaran</label><input id="kls_tahun" class="form-control" value="2026/2027" /></div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="saveKelas()">Simpan Kelas</button>
+      </div>
+      <div class="panel"><div class="table-wrap"><table><thead><tr><th>Kode</th><th>Nama Kelas</th><th>Wali Kelas</th><th>Aksi</th></tr></thead><tbody id="tbodyKelas"></tbody></table></div></div>
+    </section>
+
+    <section id="tab-siswa" class="tab-pane" style="display:none;">
+      <div class="panel">
+        <div class="panel-title">2. Form Data Siswa (CRUD)</div>
+        <input type="hidden" id="sis_id" />
+        <div class="form-grid">
+          <div class="form-group"><label>NIS</label><input id="sis_nis" class="form-control" /></div>
+          <div class="form-group"><label>Nama Siswa</label><input id="sis_nama" class="form-control" /></div>
+          <div class="form-group"><label>JK</label><select id="sis_jk" class="form-control"><option>Laki-laki</option><option>Perempuan</option></select></div>
+          <div class="form-group"><label>Kelas</label><select id="sis_kelas" class="form-control"></select></div>
+          <div class="form-group"><label>Alamat</label><input id="sis_alamat" class="form-control" /></div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="saveSiswa()">Simpan Siswa</button>
+      </div>
+      <div class="panel"><div class="table-wrap"><table><thead><tr><th>NIS</th><th>Nama</th><th>Kelas</th><th>Aksi</th></tr></thead><tbody id="tbodySiswa"></tbody></table></div></div>
+    </section>
+
+    <section id="tab-kelompok" class="tab-pane" style="display:none;">
+      <div class="panel">
+        <div class="panel-title">3. Form Kelompok Siswa per Kelas (CRUD)</div>
+        <input type="hidden" id="klp_id" />
+        <div class="form-grid">
+          <div class="form-group"><label>Nama Kelompok</label><input id="klp_nama" class="form-control" /></div>
+          <div class="form-group"><label>Kelas</label><select id="klp_kelas" class="form-control"></select></div>
+          <div class="form-group"><label>Siswa</label><select id="klp_siswa" class="form-control"></select></div>
+          <div class="form-group"><label>Peran</label><select id="klp_peran" class="form-control"><option>Ketua Kelompok</option><option>Anggota</option></select></div>
+          <div class="form-group"><label>Topik Tugas</label><input id="klp_topik" class="form-control" /></div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="saveKelompok()">Simpan Kelompok</button>
+      </div>
+      <div class="panel"><div class="table-wrap"><table><thead><tr><th>Kelompok</th><th>Kelas</th><th>Siswa</th><th>Topik</th><th>Aksi</th></tr></thead><tbody id="tbodyKelompok"></tbody></table></div></div>
+    </section>
+
+    <section id="tab-absensi" class="tab-pane" style="display:none;">
+      <div class="panel">
+        <div class="panel-title">4. Form Absensi Siswa per Kelas (CRUD)</div>
+        <input type="hidden" id="abs_id" />
+        <div class="form-grid">
+          <div class="form-group"><label>Tanggal</label><input type="date" id="abs_tanggal" class="form-control" value="2026-10-04" /></div>
+          <div class="form-group"><label>Kelas</label><select id="abs_kelas" class="form-control"></select></div>
+          <div class="form-group"><label>Siswa</label><select id="abs_siswa" class="form-control"></select></div>
+          <div class="form-group"><label>Status</label><select id="abs_status" class="form-control"><option>Hadir</option><option>Izin</option><option>Sakit</option><option>Alfa</option></select></div>
+          <div class="form-group"><label>Keterangan</label><input id="abs_ket" class="form-control" /></div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="saveAbsensi()">Simpan Absensi</button>
+      </div>
+      <div class="panel"><div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Kelas</th><th>Siswa</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="tbodyAbsensi"></tbody></table></div></div>
+    </section>
+
+    <section id="tab-laporan" class="tab-pane" style="display:none;">
+      <div class="panel">
+        <div class="panel-title">5. Laporan Data Kehadiran &amp; Kelompok</div>
+        <div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Kelas</th><th>Siswa</th><th>Kelompok</th><th>Status</th><th>Ket</th></tr></thead><tbody id="tbodyLaporan"></tbody></table></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+  let DB = {
+    users: [
+      { id: 'USR-01', username: 'admin', password: 'admin123', namaLengkap: 'Drs. Hendra Wijaya', role: 'Admin' },
+      { id: 'USR-02', username: 'guru', password: 'guru123', namaLengkap: 'Rina Kartika, S.Pd', role: 'Guru' }
+    ],
+    kelas: [
+      { id: 'KLS-01', kodeKelas: 'X-IPA-1', namaKelas: 'Kelas X IPA 1', waliKelas: 'Rina Kartika, S.Pd', tahunAjaran: '2026/2027' },
+      { id: 'KLS-02', kodeKelas: 'X-IPS-1', namaKelas: 'Kelas X IPS 1', waliKelas: 'Bambang Sutrisno, M.Pd', tahunAjaran: '2026/2027' }
+    ],
+    siswa: [
+      { id: 'SIS-01', nis: '2026001', namaSiswa: 'Ahmad Fauzi', jenisKelamin: 'Laki-laki', namaKelas: 'Kelas X IPA 1', alamat: 'Jl. Merdeka No. 12' },
+      { id: 'SIS-02', nis: '2026002', namaSiswa: 'Siti Nurhaliza', jenisKelamin: 'Perempuan', namaKelas: 'Kelas X IPS 1', alamat: 'Jl. Sudirman No. 45' }
+    ],
+    kelompok: [
+      { id: 'KLP-01', namaKelompok: 'Kelompok 1 - Sains Terpadu', namaKelas: 'Kelas X IPA 1', namaSiswa: 'Ahmad Fauzi', peranKelompok: 'Ketua Kelompok', topikTugas: 'Praktikum Biologi Sel' },
+      { id: 'KLP-02', namaKelompok: 'Kelompok 2 - Ekonomi Nusantara', namaKelas: 'Kelas X IPS 1', namaSiswa: 'Siti Nurhaliza', peranKelompok: 'Ketua Kelompok', topikTugas: 'Analisis Pasar Modal' }
+    ],
+    absensi: [
+      { id: 'ABS-01', tanggal: '2026-10-04', namaKelas: 'Kelas X IPA 1', nis: '2026001', namaSiswa: 'Ahmad Fauzi', status: 'Hadir', keterangan: 'Hadir tepat waktu' },
+      { id: 'ABS-02', tanggal: '2026-10-04', namaKelas: 'Kelas X IPS 1', nis: '2026002', namaSiswa: 'Siti Nurhaliza', status: 'Izin', keterangan: 'Izin olimpiade provinsi' }
+    ]
+  };
+
+  function handleLogin() {
+    const u = document.getElementById('loginUser').value.trim();
+    const p = document.getElementById('loginPass').value.trim();
+    const found = DB.users.find(x => x.username === u && x.password === p);
+    if (found) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('appScreen').style.display = 'block';
+      renderAll();
+    } else {
+      const err = document.getElementById('loginErr');
+      err.textContent = 'Username atau password salah!';
+      err.style.display = 'block';
+    }
+  }
+  function handleLogout() {
+    document.getElementById('appScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+  }
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-pane').forEach(e => e.style.display = 'none');
+    document.getElementById('tab-' + id).style.display = 'block';
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  function renderAll() {
+    document.getElementById('statSiswa').textContent = DB.siswa.length;
+    document.getElementById('statKelas').textContent = DB.kelas.length;
+    document.getElementById('statKelompok').textContent = DB.kelompok.length;
+    document.getElementById('statAbsensi').textContent = DB.absensi.length;
+
+    const counts = { Hadir: 0, Izin: 0, Sakit: 0, Alfa: 0 };
+    DB.absensi.forEach(a => counts[a.status] = (counts[a.status] || 0) + 1);
+    const total = Math.max(1, DB.absensi.length);
+    const colors = { Hadir: '#10B981', Izin: '#3B82F6', Sakit: '#F59E0B', Alfa: '#EF4444' };
+    document.getElementById('chartStatusBars').innerHTML = Object.keys(counts).map(k => {
+      const pct = Math.round((counts[k] / total) * 100);
+      return `<div class="bar-row"><div class="bar-label"><span>${k}</span><span>${counts[k]} (${pct}%)</span></div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${colors[k]}"></div></div></div>`;
+    }).join('');
+
+    document.getElementById('chartKelasBars').innerHTML = DB.kelas.map(k => {
+      const c = DB.siswa.filter(s => s.namaKelas === k.namaKelas).length;
+      return `<div class="bar-row"><div class="bar-label"><span>${k.namaKelas}</span><span>${c} Siswa</span></div><div class="bar-track"><div class="bar-fill" style="width:${Math.min(100, c*45)}%;background:#0F4C81"></div></div></div>`;
+    }).join('');
+
+    const kOpts = DB.kelas.map(k => `<option value="${k.namaKelas}">${k.namaKelas}</option>`).join('');
+    ['sis_kelas','klp_kelas','abs_kelas'].forEach(id => document.getElementById(id).innerHTML = kOpts);
+    const sOpts = DB.siswa.map(s => `<option value="${s.namaSiswa}">${s.namaSiswa}</option>`).join('');
+    ['klp_siswa','abs_siswa'].forEach(id => document.getElementById(id).innerHTML = sOpts);
+
+    document.getElementById('tbodyUsers').innerHTML = DB.users.map(u => `<tr><td>${u.username}</td><td>${u.password}</td><td>${u.namaLengkap}</td><td>${u.role}</td><td><button class="btn btn-danger btn-sm" onclick="del('users','${u.id}')">Hapus</button></td></tr>`).join('');
+    document.getElementById('tbodyKelas').innerHTML = DB.kelas.map(k => `<tr><td>${k.kodeKelas}</td><td>${k.namaKelas}</td><td>${k.waliKelas}</td><td><button class="btn btn-danger btn-sm" onclick="del('kelas','${k.id}')">Hapus</button></td></tr>`).join('');
+    document.getElementById('tbodySiswa').innerHTML = DB.siswa.map(s => `<tr><td>${s.nis}</td><td>${s.namaSiswa}</td><td>${s.namaKelas}</td><td><button class="btn btn-danger btn-sm" onclick="del('siswa','${s.id}')">Hapus</button></td></tr>`).join('');
+    document.getElementById('tbodyKelompok').innerHTML = DB.kelompok.map(g => `<tr><td>${g.namaKelompok}</td><td>${g.namaKelas}</td><td>${g.namaSiswa}</td><td>${g.topikTugas}</td><td><button class="btn btn-danger btn-sm" onclick="del('kelompok','${g.id}')">Hapus</button></td></tr>`).join('');
+    document.getElementById('tbodyAbsensi').innerHTML = DB.absensi.map(a => `<tr><td>${a.tanggal}</td><td>${a.namaKelas}</td><td>${a.namaSiswa}</td><td><span class="badge badge-${a.status}">${a.status}</span></td><td><button class="btn btn-danger btn-sm" onclick="del('absensi','${a.id}')">Hapus</button></td></tr>`).join('');
+    document.getElementById('tbodyLaporan').innerHTML = DB.absensi.map(a => {
+      const klp = DB.kelompok.find(k => k.namaSiswa === a.namaSiswa);
+      return `<tr><td>${a.tanggal}</td><td>${a.namaKelas}</td><td>${a.namaSiswa}</td><td>${klp ? klp.namaKelompok : '-'}</td><td><span class="badge badge-${a.status}">${a.status}</span></td><td>${a.keterangan}</td></tr>`;
+    }).join('');
+  }
+  function del(key, id) { DB[key] = DB[key].filter(x => x.id !== id); renderAll(); }
+  function saveUsers() { DB.users.push({ id: 'USR-' + Date.now(), username: usr_username.value, password: usr_password.value, namaLengkap: usr_nama.value, role: usr_role.value }); renderAll(); }
+  function saveKelas() { DB.kelas.push({ id: 'KLS-' + Date.now(), kodeKelas: kls_kode.value, namaKelas: kls_nama.value, waliKelas: kls_wali.value, tahunAjaran: kls_tahun.value }); renderAll(); }
+  function saveSiswa() { DB.siswa.push({ id: 'SIS-' + Date.now(), nis: sis_nis.value, namaSiswa: sis_nama.value, jenisKelamin: sis_jk.value, namaKelas: sis_kelas.value, alamat: sis_alamat.value }); renderAll(); }
+  function saveKelompok() { DB.kelompok.push({ id: 'KLP-' + Date.now(), namaKelompok: klp_nama.value, namaKelas: klp_kelas.value, namaSiswa: klp_siswa.value, peranKelompok: klp_peran.value, topikTugas: klp_topik.value }); renderAll(); }
+  function saveAbsensi() { DB.absensi.push({ id: 'ABS-' + Date.now(), tanggal: abs_tanggal.value, namaKelas: abs_kelas.value, nis: '202600X', namaSiswa: abs_siswa.value, status: abs_status.value, keterangan: abs_ket.value }); renderAll(); }
+</script>
+</body>
+</html>

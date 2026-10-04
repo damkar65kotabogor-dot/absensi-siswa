@@ -1,0 +1,6 @@
+{
+  "name": "Absensi Siswa",
+  "description": "Aplikasi Absensi Siswa modern dengan Dashboard Grafik, Master Data User & Kelas, Data Siswa, Kelompok Siswa per Kelas, Absensi, Laporan CRUD, serta kode lengkap Google Apps Script (Code.gs & Index.html).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
